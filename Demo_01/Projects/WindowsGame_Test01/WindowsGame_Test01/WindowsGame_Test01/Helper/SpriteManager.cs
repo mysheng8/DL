@@ -85,6 +85,20 @@ namespace WindowsGame_Test01.Helper
             return spriteText;
         }
 
+        public Canvas CreateCanvas(string texFileName, int setClipSizeX, int setClipSizeY, int setPaintWidth, int setPaintHeight, int[,] setMap, RenderPass setRenderPass)
+        {
+            Texture2D newTex = game.Content.Load<Texture2D>(texFileName);
+            int screenWidth = game.GraphicsDevice.Viewport.Width;
+            int screenHeight = game.GraphicsDevice.Viewport.Height;
+            Canvas canvas = new Canvas(newTex, setClipSizeX, setClipSizeY, setPaintWidth, setPaintHeight, setMap, screenWidth, screenHeight);
+            canvas.renderPass = setRenderPass;
+            textures.Add(newTex);
+            SpriteList.Add(canvas);
+            
+            LogHelper.Write("Create a Canvas " + texFileName);
+            return canvas;
+        }
+
         public void Update() 
         {
             foreach (Sprite sprite in SpriteList) 
@@ -93,13 +107,13 @@ namespace WindowsGame_Test01.Helper
             }
         }
 
-        public void Draw(BasicEffect effect)
+        public void Draw()
         {
             foreach (RenderPass pass in Enum.GetValues(typeof(RenderPass)))
             {
                 List<Sprite> renderPassList = SpriteList.FindAll(r => r.renderPass == pass);
                 renderPassList.Sort((r1, r2) => r2.sortID.CompareTo(r1.sortID));
-                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, null, DepthStencilState.DepthRead, RasterizerState.CullCounterClockwise, effect);
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, null, DepthStencilState.DepthRead, RasterizerState.CullCounterClockwise);
                 //spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
                 foreach (Sprite s in renderPassList)
                 {
@@ -132,23 +146,51 @@ namespace WindowsGame_Test01.Helper
         protected override void LoadContent()
         {
             LogHelper.Write("Window Test Game LoadContent...");
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(0, 0, 64, 64), null, RenderPass.Background);
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(80, 0, 64, 64), null, RenderPass.Background);
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(220, 0, 64, 64), null, RenderPass.Background);
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(0, 0, 64, 64), null, RenderPass.Background);
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(80, 90, 64, 64), null, RenderPass.Background);
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(220, 180, 64, 64), null, RenderPass.Background);
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(320, 280, 64, 64), null, RenderPass.Background);
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(120, 280, 64, 64), null, RenderPass.Background);
-            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(220, 280, 64, 64), null, RenderPass.Background);
+            
+            int[,] mg_map = new int[20,20]{
+                                            { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+                                            { 2, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 3, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 2 },
+                                            { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
+                                            };
+
+            testSpriteManager.CreateCanvas(@"test/things1", 4, 4, 32, 32, mg_map, RenderPass.Background);
+
+
+
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(0, 0, 64, 64), null, RenderPass.Environment);
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(80, 0, 64, 64), null, RenderPass.Environment);
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(220, 0, 64, 64), null, RenderPass.Environment);
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(0, 0, 64, 64), null, RenderPass.Environment);
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(80, 90, 64, 64), null, RenderPass.Environment);
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(220, 180, 64, 64), null, RenderPass.Environment);
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(320, 280, 64, 64), null, RenderPass.Environment);
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(120, 280, 64, 64), null, RenderPass.Environment);
+            testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(220, 280, 64, 64), null, RenderPass.Environment);
             testSpriteManager.CreateAnimateSprite(@"Character01/test02", new Rectangle(320, 280, 150, 150), new Point(4, 5), RenderPass.Charactor);
             testSpriteManager.CreateAnimateSprite(@"Character01/test02", new Rectangle(260, 280, 150, 150), new Point(4, 5), RenderPass.Charactor);
             testSpriteManager.CreateAnimateSprite(@"Character01/test02", new Rectangle(120, 280, 150, 150), new Point(4, 5), RenderPass.Charactor);
-            testSpriteManager.CreateSpriteText("Hello world", new Vector2(110, 110), @"Fonts\Texture", RenderPass.Background);
-            testSpriteManager.CreateSpriteText("Hello world", new Vector2(210, 110), @"Fonts\Texture", RenderPass.Background);
-            testSpriteManager.CreateSpriteText("Hello world", new Vector2(310, 110), @"Fonts\Texture", RenderPass.Background);
-            testSpriteManager.CreateSpriteText("Hello world", new Vector2(310, 210), @"Fonts\Texture", RenderPass.Background);
-            testSpriteManager.CreateSpriteText("Hello world", new Vector2(310, 310), @"Fonts\Texture", RenderPass.Background);
+            testSpriteManager.CreateSpriteText("Hello world", new Vector2(110, 110), @"Fonts\Texture", RenderPass.User);
+            testSpriteManager.CreateSpriteText("Hello world", new Vector2(210, 110), @"Fonts\Texture", RenderPass.User);
+            testSpriteManager.CreateSpriteText("Hello world", new Vector2(310, 110), @"Fonts\Texture", RenderPass.User);
+            testSpriteManager.CreateSpriteText("Hello world", new Vector2(310, 210), @"Fonts\Texture", RenderPass.User);
+            testSpriteManager.CreateSpriteText("Hello world", new Vector2(310, 310), @"Fonts\Texture", RenderPass.User);
             testSpriteManager.CreateSpriteText("Good morning", new Vector2(210, 410), @"Fonts\sfText", RenderPass.Charactor);
             testSpriteManager.CreateSpriteText("Good Afternoon", new Vector2(510, 310), @"Fonts\sfText", RenderPass.Charactor);
             spriteFont = Content.Load<SpriteFont>(@"Fonts\sfText");
@@ -164,13 +206,13 @@ namespace WindowsGame_Test01.Helper
         {
             
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            testSpriteManager.Draw(base.effect);
+            testSpriteManager.Draw();
             base.Draw(gameTime);
-            SpriteBatch spriteBatch=new SpriteBatch(this.GraphicsDevice);
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, null, DepthStencilState.DepthRead, RasterizerState.CullCounterClockwise, base.effect);
-            spriteBatch.DrawString(spriteFont, "hello, world!", Vector2.Zero, Color.White, 0, Vector2.Zero, 0.01f, 0, 0);
+            //SpriteBatch spriteBatch=new SpriteBatch(this.GraphicsDevice);
+            //spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, null, DepthStencilState.DepthRead, RasterizerState.CullCounterClockwise);
+            //spriteBatch.DrawString(spriteFont, "hello, world!", Vector2.Zero, Color.White, 0, Vector2.Zero, 0.01f, 0, 0);
 
-            spriteBatch.End();
+           // spriteBatch.End();
 
             
 
