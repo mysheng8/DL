@@ -6,8 +6,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using WindowsGame_Test01.Helper;
 
-namespace WindowsGame_Test01.Helper
+namespace WindowsGame_Test01.Data
 {
     public class Canvas : Sprite
     {
@@ -16,8 +17,8 @@ namespace WindowsGame_Test01.Helper
 
         public int distX = 0;
         public int distY = 0;
-        public int movingSpeedX = 2;
-        public int movingSpeedY = 2;
+        private int movingSpeedX = 2;
+        private int movingSpeedY = 2;
 
         private readonly int mapSizeX;
         private readonly int mapSizeY;
@@ -97,8 +98,11 @@ namespace WindowsGame_Test01.Helper
                     distY += movingSpeedY;
                 //LogHelper.Write("solving Keyboard Input");
             }
-        
-        
+        }
+        public void setMovingSpeed(int x,int y) 
+        {
+            movingSpeedX = x;
+            movingSpeedY = y;
         }
 
     }

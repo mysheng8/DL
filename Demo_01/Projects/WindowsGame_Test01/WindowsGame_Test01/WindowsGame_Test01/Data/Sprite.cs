@@ -5,7 +5,10 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace WindowsGame_Test01.Helper
+
+
+
+namespace WindowsGame_Test01.Data
 {
     public class Sprite
     {
@@ -77,22 +80,7 @@ namespace WindowsGame_Test01.Helper
     }
     #endregion
 
-    public class SpriteText : Sprite
-    {
-        public string text;
-        public SpriteFont spriteFont;
-        public Vector2 position;
-        public SpriteText(string setText, Vector2 setPosition, SpriteFont setSpriteFont)
-        {
-            text = setText;
-            position = setPosition;
-            spriteFont = setSpriteFont;
-        }
-        public override void SpriteDraw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.DrawString(spriteFont, text, position, Color.White);
-        }
-    }
+
 
 
 }

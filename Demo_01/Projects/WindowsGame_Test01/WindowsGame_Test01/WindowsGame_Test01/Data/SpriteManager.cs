@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using WindowsGame_Test01.Helper;
+
 
 #if DEBUG
     using NUnit.Framework;
 #endif
 
 
-namespace WindowsGame_Test01.Helper
+namespace WindowsGame_Test01.Data
 {
     public enum RenderPass
     {

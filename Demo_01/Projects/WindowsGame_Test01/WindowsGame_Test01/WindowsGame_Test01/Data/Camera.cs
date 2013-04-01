@@ -5,9 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using WindowsGame_Test01.Helper;
 
-
-namespace WindowsGame_Test01.Helper
+namespace WindowsGame_Test01.Data
 {
     class Camera : GameComponent
     {

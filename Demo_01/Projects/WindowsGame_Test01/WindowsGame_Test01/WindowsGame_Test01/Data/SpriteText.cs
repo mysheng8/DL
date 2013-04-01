@@ -12,9 +12,24 @@ using NUnit.Framework;
 
 
 
-namespace WindowsGame_Test01.Helper
+namespace WindowsGame_Test01.Data
 {
-
+    public class SpriteText : Sprite
+    {
+        public string text;
+        public SpriteFont spriteFont;
+        public Vector2 position;
+        public SpriteText(string setText, Vector2 setPosition, SpriteFont setSpriteFont)
+        {
+            text = setText;
+            position = setPosition;
+            spriteFont = setSpriteFont;
+        }
+        public override void SpriteDraw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.DrawString(spriteFont, text, position, Color.White);
+        }
+    }
 
     public class SpriteTextHelper
     {

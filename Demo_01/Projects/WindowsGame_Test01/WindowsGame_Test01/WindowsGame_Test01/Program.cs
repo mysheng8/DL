@@ -1,5 +1,6 @@
 using System;
 using WindowsGame_Test01.Helper;
+using WindowsGame_Test01.Data;
 
 namespace WindowsGame_Test01
 {

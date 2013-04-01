@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using WindowsGame_Test01.Helper;
+using WindowsGame_Test01.Data;
 
 namespace WindowsGame_Test01
 {

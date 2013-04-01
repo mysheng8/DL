@@ -111,13 +111,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\Camera.cs" />
-    <Compile Include="Helper\Canvas.cs" />
+    <Compile Include="Data\Camera.cs" />
+    <Compile Include="Data\Canvas.cs" />
     <Compile Include="Helper\Input.cs" />
-    <Compile Include="Helper\Sprite.cs" />
-    <Compile Include="Helper\SpriteTextHelper.cs" />
+    <Compile Include="Data\Sprite.cs" />
+    <Compile Include="Data\SpriteText.cs" />
     <Compile Include="TestGame.cs" />
-    <Compile Include="Helper\SpriteManager.cs" />
+    <Compile Include="Data\SpriteManager.cs" />
     <Compile Include="Helper\LogHelper.cs" />
     <Compile Include="SpriteManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
