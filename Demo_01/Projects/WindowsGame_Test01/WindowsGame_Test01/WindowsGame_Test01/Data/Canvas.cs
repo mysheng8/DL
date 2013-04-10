@@ -10,6 +10,79 @@ using WindowsGame_Test01.Helper;
 
 namespace WindowsGame_Test01.Data
 {
+    public class Background : Sprite
+    {
+        public Texture2D textureImage;
+
+        public int distX = 0;
+        public int distY = 0;
+
+        private int movingSpeedX = 2;
+        private int movingSpeedY = 1;
+
+        private readonly int paintWidth;
+        private readonly int paintHeight;
+
+        private readonly int screenSizeX;
+        private readonly int screenSizeY;
+
+        private InputMontior inputMontior;
+
+        public void setMovingSpeed(int x, int y)
+        {
+            movingSpeedX = x;
+            movingSpeedY = y;
+        }
+        public Background(Texture2D setTexture, int setPaintWidth, int setPaintHeight, int setScreenSizeX, int setScreenSizeY)
+        {
+            textureImage = setTexture;
+            paintWidth = setPaintWidth;
+            paintHeight = setPaintHeight;
+
+            screenSizeX = setScreenSizeX;
+            screenSizeY = setScreenSizeY;
+            inputMontior = InputMontior.Instance;
+            inputMontior.keyEvent += new KeyHandler(this.KeyboardInputController);
+        
+        }
+        public override void SpriteDraw(SpriteBatch spriteBatch)
+        {
+            int y = distY;
+            if (distY > 0) { y = 0; }
+            if ((distY + paintHeight) < screenSizeY && paintHeight > screenSizeY) { y = screenSizeY - paintHeight; }
+
+            int numClip = screenSizeX / paintWidth +1;
+            for (int i = 0; i <= numClip; i++) 
+            {
+                int x = (i - 1) * paintWidth + distX % paintWidth;
+                if (distX < 0) 
+                {
+                    x = i * paintWidth + distX % paintWidth;
+                }
+                Rectangle Rect = new Rectangle(x, y, paintWidth, paintHeight);
+                spriteBatch.Draw(textureImage, Rect, null, Color.White);
+            }
+
+        }
+        private void KeyboardInputController(Object s, KeyEventArgs e)
+        {
+            foreach (Keys key in e.KeyChars)
+            {
+                if (key == Keys.Left)
+                    distX += movingSpeedX;
+                if (key == Keys.Right)
+                    distX -= movingSpeedX;
+                if (key == Keys.Up)
+                    distY += movingSpeedY;
+                if (key == Keys.Down)
+                    distY -= movingSpeedY;
+                //LogHelper.Write("solving Keyboard Input");
+                
+            }
+        }
+    
+    }
+
     public class Canvas : Sprite
     {
         public Texture2D textureImage;
@@ -17,8 +90,8 @@ namespace WindowsGame_Test01.Data
 
         public int distX = 0;
         public int distY = 0;
-        private int movingSpeedX = 2;
-        private int movingSpeedY = 2;
+        private int movingSpeedX = 3;
+        private int movingSpeedY = 3;
 
         private readonly int mapSizeX;
         private readonly int mapSizeY;
@@ -78,28 +151,23 @@ namespace WindowsGame_Test01.Data
                 }
             }
         }
-        public override void Update()
-        {
-            base.Update();
-
-        }
 
         private void KeyboardInputController(Object s, KeyEventArgs e)
         {
             foreach (Keys key in e.KeyChars)
             {
                 if (key == Keys.Left)
-                    distX -= movingSpeedX;
-                if (key == Keys.Right)
                     distX += movingSpeedX;
+                if (key == Keys.Right)
+                    distX -= movingSpeedX;
                 if (key == Keys.Up)
-                    distY -= movingSpeedY;
-                if (key == Keys.Down)
                     distY += movingSpeedY;
+                if (key == Keys.Down)
+                    distY -= movingSpeedY;
                 //LogHelper.Write("solving Keyboard Input");
             }
         }
-        public void setMovingSpeed(int x,int y) 
+        public void setMovingSpeed(int x, int y)
         {
             movingSpeedX = x;
             movingSpeedY = y;

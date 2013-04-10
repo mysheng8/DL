@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace WindowsGame_Test01.Helper
 {
-    public enum KeyState
+    public enum KeyStatus
     {
         OnPress = 0,//just press 
         OnRelease = 1,
@@ -29,8 +29,9 @@ namespace WindowsGame_Test01.Helper
     public class KeyEventArgs : EventArgs
     {
         private Keys[] keyChars;
-        private KeyState keyboardState;
-        public KeyEventArgs( Keys[] setKeyChars,KeyState setKeyboardState ) : base()
+        private KeyStatus keyboardState;
+        public KeyEventArgs(Keys[] setKeyChars, KeyStatus setKeyboardState)
+            : base()
         {
             this.keyChars = setKeyChars;
             this.keyboardState = setKeyboardState;
@@ -43,7 +44,7 @@ namespace WindowsGame_Test01.Helper
                 return keyChars;
             }
         }
-        public KeyState KeyboardState
+        public KeyStatus KeyboardState
         {
             get
             {
@@ -126,32 +127,52 @@ namespace WindowsGame_Test01.Helper
         
         public event MouseHandler mouseEvent;
 
+        private KeyboardState currentKeyboardState;
+        private MouseState currentMouseState;
         private KeyboardState previousKeyboardState;
         private MouseState previousMouseState;
-        private KeyState keystate;
+        private KeyStatus keystate;
         private MouseButton Button;
 
         public void Update()
         {
-            KeyboardState currentKeyboardState= Keyboard.GetState();
+            currentKeyboardState= Keyboard.GetState();
             Keys[] keys = currentKeyboardState.GetPressedKeys();
-            
-            if(keys!=null)
+            Keys[] previousKeys = previousKeyboardState.GetPressedKeys();
+
+            if (keys.Length > 0)
             {
-                if(keys==previousKeyboardState.GetPressedKeys())
-                    keystate=KeyState.OnKeyDown;
-                if(previousKeyboardState.GetPressedKeys()==null)
-                    keystate=KeyState.OnPress;
-                KeyEventArgs keyEventArgs = new KeyEventArgs( keys,keystate);
+                if (keys.Equals(previousKeys))
+                    keystate = KeyStatus.OnKeyDown;
+                if (previousKeys.Length == 0)
+                    keystate = KeyStatus.OnPress;
+                KeyEventArgs keyEventArgs = new KeyEventArgs(keys, keystate);
                 //rise a keyboard event
-                if(keyEvent!=null)
-                    keyEvent(this,keyEventArgs);
-            
+                if (keyEvent != null)
+                    keyEvent(this, keyEventArgs);
+            }
+            if (previousKeys.Length > 0)
+            {
+                Keys[] outkeys = new Keys[previousKeys.Length];
+                foreach (Keys k in previousKeys)
+                {
+                    if (currentKeyboardState.IsKeyUp(k))
+                        outkeys[(outkeys.Length - 1)] = k;
+                }
+                if (outkeys[0] != Keys.None)//outkey is not empty
+                {
+                    keystate = KeyStatus.OnRelease;
+                    KeyEventArgs keyEventArgs = new KeyEventArgs(outkeys, keystate);
+                    //rise a keyboard event
+                    if (keyEvent != null)
+                        keyEvent(this, keyEventArgs);
+                }
+                
             }
             previousKeyboardState=currentKeyboardState;
 
             
-            MouseState currentMouseState= Mouse.GetState();
+            currentMouseState= Mouse.GetState();
             if(currentMouseState.LeftButton==ButtonState.Pressed)
                 Button=MouseButton.LButton;
             if (currentMouseState.RightButton == ButtonState.Pressed)

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using WindowsGame_Test01.Data;
 
 namespace WindowsGame_Test01
 {
@@ -36,8 +37,8 @@ namespace WindowsGame_Test01
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            spriteManger = new SpriteManager(this);
-            Components.Add(spriteManger);
+            //spriteManger = new SpriteManager(this);
+            //Components.Add(spriteManger);
             base.Initialize();
 
         }
