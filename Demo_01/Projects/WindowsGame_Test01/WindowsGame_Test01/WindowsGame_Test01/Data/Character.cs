@@ -244,7 +244,7 @@ namespace WindowsGame_Test01.Data
             }
         }
     }
-    public class CharacterAnimSprite : Sprite
+    public class CharacterAnimSprite : Sprite2D
     {
         public readonly string charName;
         InputMontior inputMontior;
@@ -326,6 +326,13 @@ namespace WindowsGame_Test01.Data
         protected float maxSpeed;
         protected float maxForce;
         protected float maxTurnRate;
+
+        public MovingEntity(string setName)
+            : base(setName)
+        { 
+        
+        
+        }
     
     }
 
@@ -333,14 +340,49 @@ namespace WindowsGame_Test01.Data
     class Character : GameEntity
     {
         CharacterAnimSprite sprite;
-        SpriteManager SpriteManager;
+        Sprite2DManager Sprite2DManager;
+        InputMontior inputMontior;
+        public int posX;
+        public int posY;
+        public int speedX;
+        public int speedY;
 
-        public Character(string setName,Rectangle setRect,Clip setIdle, Clip setRun,Clip setAttack1 ):base(setName)
+        public bool onGround;
+
+        public Character(string setName, Rectangle setRect, Clip setIdle, Clip setRun, Clip setAttack1)
+            : base(setName)
         {
             sprite = new CharacterAnimSprite(setRect, setIdle, setRun, setAttack1);
-            SpriteManager = SpriteManager.Instance;
-            SpriteManager.CreateCharacterAnim(sprite, RenderPass.Charactor, 1);
+            Sprite2DManager = Sprite2DManager.Instance;
+            Sprite2DManager.CreateCharacterAnim(sprite, RenderPass.Charactor, 1);
+            posX = setRect.X;
+            posY = setRect.Y;
+            speedX = 2;
+            speedY = 2;
+
+            inputMontior = InputMontior.Instance;
+            inputMontior.keyEvent += new KeyHandler(this.onChange);
         }
+        public void onChange(Object s, KeyEventArgs e)
+        {
+            foreach (Keys key in e.KeyChars)
+            {
+                if (key == Keys.Left)
+                    posX -= speedX;
+                if (key == Keys.Right)
+                    posX += speedX;
+            }
+            sprite.rect.X = posX;
+            sprite.rect.Y = posY;
+            
+        }
+        public void ForceOnGround() 
+        {
+        
+        }
+
+
+
     }
 
 

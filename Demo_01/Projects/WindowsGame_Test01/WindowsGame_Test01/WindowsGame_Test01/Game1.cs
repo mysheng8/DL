@@ -20,7 +20,7 @@ namespace WindowsGame_Test01
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        SpriteManager spriteManger;
+        Sprite2DManager sprite2DManager;
 
         public Game1()
         {

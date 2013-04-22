@@ -10,7 +10,7 @@ using WindowsGame_Test01.Helper;
 
 namespace WindowsGame_Test01.Data
 {
-    public class Background : Sprite
+    public class Background : Sprite2D
     {
         public Texture2D textureImage;
 
@@ -83,7 +83,7 @@ namespace WindowsGame_Test01.Data
     
     }
 
-    public class Canvas : Sprite
+    public class Canvas: Sprite2D
     {
         public Texture2D textureImage;
                
@@ -171,6 +171,96 @@ namespace WindowsGame_Test01.Data
         {
             movingSpeedX = x;
             movingSpeedY = y;
+        }
+
+    }
+
+
+
+    public class Ground
+    {
+        public readonly float height;
+        public Ground(float setHeight) 
+        {
+            height = setHeight;
+        }
+    
+    }
+
+
+    public class CollisionWorld
+    {
+        private CollisionWorld collisionWorld;
+        private CollisionWorld() { }
+        public CollisionWorld instance
+        {
+            get 
+            {
+                if (collisionWorld == null)
+                {
+                    collisionWorld = new CollisionWorld();
+                }
+                return collisionWorld;
+            }
+        }
+
+        public void CreateGround(float setHeight) 
+        {
+            Ground ground = new Ground(setHeight);
+
+        }
+
+
+
+    
+    }
+
+
+
+
+    public class Map 
+    {
+        Sprite2DManager sprite2DManager;
+
+        public Map()
+        {
+            sprite2DManager = Sprite2DManager.Instance;
+            AddRenderLayer();
+            AddCollisionLayer();
+        }
+        public void AddRenderLayer()
+        {
+            sprite2DManager.CreateBackground(@"test/background", 300, 500, RenderPass.Background, 0);
+            int[,] mg_map = new int[20, 20]{
+                                            { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+                                            { 2, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 3, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 2 },
+                                            { 2, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 2 },
+                                            { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
+                                            };
+
+            sprite2DManager.CreateCanvas(@"test/things1", 4, 4, 32, 32, mg_map, RenderPass.Background, 2);
+        
+        }
+        public void AddCollisionLayer() 
+        {
+        
+        
         }
 
     }

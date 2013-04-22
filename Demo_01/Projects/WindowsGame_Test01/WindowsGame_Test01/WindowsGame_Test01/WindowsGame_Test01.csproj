@@ -112,11 +112,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Camera.cs" />
-    <Compile Include="Data\Canvas.cs" />
+    <Compile Include="Data\Sprite3D.cs" />
+    <Compile Include="Data\Map.cs" />
     <Compile Include="Data\Character.cs" />
     <Compile Include="Data\GameEntity.cs" />
+    <Compile Include="Helper\Fps.cs" />
     <Compile Include="Helper\Input.cs" />
-    <Compile Include="Data\Sprite.cs" />
+    <Compile Include="Data\Sprite2D.cs" />
     <Compile Include="Data\SpriteText.cs" />
     <Compile Include="TestGame.cs" />
     <Compile Include="Helper\LogHelper.cs" />

@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace WindowsGame_Test01.Data
 {
-    public class SpriteText : Sprite
+    public class SpriteText : Sprite2D
     {
         public string text;
         public SpriteFont spriteFont;
@@ -30,6 +30,7 @@ namespace WindowsGame_Test01.Data
             spriteBatch.DrawString(spriteFont, text, position, Color.White);
         }
     }
+
 
     public class SpriteTextHelper
     {

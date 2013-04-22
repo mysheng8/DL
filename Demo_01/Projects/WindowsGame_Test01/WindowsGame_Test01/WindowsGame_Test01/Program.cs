@@ -12,7 +12,7 @@ namespace WindowsGame_Test01
         /// </summary>
         static void Main(string[] args)
         {
-            using (SpriteManagerTests game = new SpriteManagerTests())
+            using (UnitTests game = new UnitTests())
             {
                 game.Run();
             }
