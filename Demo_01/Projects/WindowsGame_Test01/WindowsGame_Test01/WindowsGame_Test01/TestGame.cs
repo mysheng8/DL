@@ -95,7 +95,7 @@ namespace WindowsGame_Test01
 
         Sprite2DManager testSpriteManager;
         Sprite3D[] testSprite3D;
-        int n = 50;
+        int n = 1;
         protected override void Initialize()
         {
             testSpriteManager = Sprite2DManager.Instance;
@@ -103,7 +103,7 @@ namespace WindowsGame_Test01
 
             base.Initialize();
             LogHelper.Write("Window Test Game Initialize...");
-
+            
 
         }
 
@@ -145,12 +145,15 @@ namespace WindowsGame_Test01
             Texture2D attTex = Content.Load<Texture2D>(@"Character01/test03");
             Clip attack1 = new Clip(attTex, new Point(5, 10));
             Character a = new Character("a", new Rectangle(420, 280, 150, 150), idle, run, attack1);
-            Texture2D testTex = Content.Load<Texture2D>(@"test/test02");
+
+
+
+            Texture2D testTex = Content.Load<Texture2D>(@"test/test01");
 
 
             testSprite3D = new Sprite3D[n];
             for (int i = 0; i < n; i++)
-                testSprite3D[i] = new Sprite3D(testTex, this);
+                testSprite3D[i] = new Sprite3D(testTex, this.GraphicsDevice);
 
             SpriteBatch spriteBatch = new SpriteBatch(this.GraphicsDevice);
             this.Components.Add(new FrameRateCounter(this, spriteBatch));
@@ -169,7 +172,7 @@ namespace WindowsGame_Test01
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
             for (int i = 0; i < n; i++)
-                testSprite3D[i].Draw(this.GraphicsDevice);
+                testSprite3D[i].Draw();
             testSpriteManager.Draw();
             
             base.Draw(gameTime);

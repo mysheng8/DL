@@ -10,13 +10,13 @@ namespace WindowsGame_Test01.Data
 {
     public class Sprite3D
     {
-        public Matrix transform;
+        public Vector3 pos;
         public Texture2D texture;
         VertexPositionTexture[] vpt;
-        Vector3 pos, lookat, up;
-        Matrix world, bbWorld, view, project;
-        BasicEffect basicEffect;
-        public Sprite3D(Texture2D setTexture,Game game)
+        GraphicsDevice device;
+
+        public BasicEffect effect;
+        public Sprite3D(Texture2D setTexture, Vector3 setPos, Matrix setView, Matrix setProj, GraphicsDevice setDevice)
         {
             vpt = new VertexPositionTexture[4];
             vpt[0] = new VertexPositionTexture(new Vector3(-25,-25, 0), new Vector2(0, 1));
@@ -26,55 +26,44 @@ namespace WindowsGame_Test01.Data
 
             texture = setTexture;
 
+            device = setDevice;
+            Matrix world = Matrix.CreateWorld(pos, new Vector3(0, 0, 1), Vector3.Up);
+            effect = new BasicEffect(device);
+            effect.World = world;
+            effect.View = setView;
+            effect.Projection = setProj;
+            effect.TextureEnabled = true;
+            effect.Texture = texture;
 
-
-            pos = new Vector3(0, 0, 200);
-            lookat = Vector3.Zero;
-            up = Vector3.Up;
-
-            world = Matrix.Identity;
-            bbWorld = Matrix.Identity;
-            view = Matrix.CreateLookAt(pos, lookat, up);
-            project = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 800f / 480f, 1, 1000);
-
-            basicEffect = new BasicEffect(game.GraphicsDevice);
-            basicEffect.World = world;
-            basicEffect.View = view;
-            basicEffect.Projection = project;
-            basicEffect.TextureEnabled = true;
-            basicEffect.Texture = texture;
         }
 
         public void Update()
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                pos.X += 1;
-                lookat.X += 1;
-                
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                pos.X -= 1;
-                lookat.X -= 1;
-                
-            }
-            view = Matrix.CreateLookAt(pos, lookat, up);
-            basicEffect.View = view;
+
         }
-        public void Draw(GraphicsDevice graphicsDevice) 
+        public void Draw() 
         {
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-    
-                graphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vpt, 0, 2);
+                effect.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+                device.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vpt, 0, 2);
             }
 
         }
 
     }
-
+    public class Renderer
+    {
+        public Renderer(Game game) 
+        {
+        
+        
+        }
+    
+    
+    }
 
 
 
