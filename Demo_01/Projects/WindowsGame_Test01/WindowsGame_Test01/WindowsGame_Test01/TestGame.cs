@@ -96,6 +96,8 @@ namespace WindowsGame_Test01
         Sprite2DManager testSpriteManager;
         Sprite3D[] testSprite3D;
         int n = 1;
+        Camera camera;
+        Hud hudview;
         protected override void Initialize()
         {
             testSpriteManager = Sprite2DManager.Instance;
@@ -149,23 +151,32 @@ namespace WindowsGame_Test01
 
 
             Texture2D testTex = Content.Load<Texture2D>(@"test/test01");
+            SpriteBatch spriteBatch = new SpriteBatch(this.GraphicsDevice);
 
+            camera = new Camera(this);
+            hudview = new Hud(this, spriteBatch);
+            
+            this.Components.Add(new FrameRateCounter(this, spriteBatch));
+            this.Components.Add(hudview);
+            this.Components.Add(camera);
 
             testSprite3D = new Sprite3D[n];
             for (int i = 0; i < n; i++)
                 testSprite3D[i] = new Sprite3D(testTex, this.GraphicsDevice);
 
-            SpriteBatch spriteBatch = new SpriteBatch(this.GraphicsDevice);
-            this.Components.Add(new FrameRateCounter(this, spriteBatch));
+
             base.LoadContent();
 
         }
         protected override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+            
             testSpriteManager.Update();
             for (int i = 0; i < n; i++)
-                testSprite3D[i].Update();
-            base.Update(gameTime);
+                testSprite3D[i].setEffect(new Vector3(0, 0, 0), camera.viewMatrix, camera.projection);
+            
+            
         }
         protected override void Draw(GameTime gameTime)
         {

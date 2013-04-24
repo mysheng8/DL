@@ -14,9 +14,9 @@ namespace WindowsGame_Test01.Data
         public Texture2D texture;
         VertexPositionTexture[] vpt;
         GraphicsDevice device;
-
+        Matrix world;
         public BasicEffect effect;
-        public Sprite3D(Texture2D setTexture, Vector3 setPos, Matrix setView, Matrix setProj, GraphicsDevice setDevice)
+        public Sprite3D(Texture2D setTexture, GraphicsDevice setDevice)
         {
             vpt = new VertexPositionTexture[4];
             vpt[0] = new VertexPositionTexture(new Vector3(-25,-25, 0), new Vector2(0, 1));
@@ -25,18 +25,23 @@ namespace WindowsGame_Test01.Data
             vpt[3] = new VertexPositionTexture(new Vector3(25, 25, 0), new Vector2(1, 0));
 
             texture = setTexture;
-
+            
             device = setDevice;
-            Matrix world = Matrix.CreateWorld(pos, new Vector3(0, 0, 1), Vector3.Up);
+            world = Matrix.CreateWorld(pos, Vector3.Forward, Vector3.Up);
             effect = new BasicEffect(device);
             effect.World = world;
-            effect.View = setView;
-            effect.Projection = setProj;
             effect.TextureEnabled = true;
             effect.Texture = texture;
 
         }
-
+        public void setEffect(Vector3 setPos, Matrix setView, Matrix setProj)
+        {
+            pos = setPos;
+            effect.View = setView;
+            effect.Projection = setProj;
+            world = Matrix.CreateWorld(pos, Vector3.Forward, Vector3.Up);
+            effect.World = world;
+        }
         public void Update()
         {
 
@@ -47,7 +52,7 @@ namespace WindowsGame_Test01.Data
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                effect.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+                device.SamplerStates[0] = SamplerState.PointClamp;
                 device.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vpt, 0, 2);
             }
 

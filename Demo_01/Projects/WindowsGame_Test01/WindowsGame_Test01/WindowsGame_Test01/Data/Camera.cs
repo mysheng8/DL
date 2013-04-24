@@ -13,7 +13,7 @@ namespace WindowsGame_Test01.Data
     {
         #region Variables
         float x = 0, y = 0;
-        float zHeight = 500.0f;
+        float zHeight = 200.0f;
         public Matrix viewMatrix;
         public Matrix projection;
         InputMontior inputMontior;
@@ -31,6 +31,8 @@ namespace WindowsGame_Test01.Data
         #region Initialize
         public override void Initialize()
         {
+            viewMatrix = Matrix.CreateLookAt(new Vector3(x, y, zHeight), new Vector3(x, y, 0), Vector3.Up);
+            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,(float)Game.Window.ClientBounds.Width / (float)Game.Window.ClientBounds.Height, 1, 1000);
             inputMontior = InputMontior.Instance;
             inputMontior.keyEvent += new KeyHandler(this.KeyboardInputController);
             base.Initialize();
@@ -61,11 +63,12 @@ namespace WindowsGame_Test01.Data
             base.Update(gameTime);
 
             viewMatrix = Matrix.CreateLookAt(
-              new Vector3(x, y, -zHeight), new Vector3(x, y, 0), Vector3.Down);
+              new Vector3(x, y, zHeight), new Vector3(x, y, 0), Vector3.Up);
             projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.PiOver4,
-                (float)Game.Window.ClientBounds.Width / (float)Game.Window.ClientBounds.Height, 1, 500);
-        
+                (float)Game.Window.ClientBounds.Width / (float)Game.Window.ClientBounds.Height, 1, 1000);
+
+
         } // Update(gameTime)
         #endregion
     } // class SimpleCamera
