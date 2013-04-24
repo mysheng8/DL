@@ -20,7 +20,7 @@ namespace WindowsGame_Test01
         GraphicsDeviceManager graphics;
         InputMontior inputMontior;
         public  BasicEffect effect;
-        Camera camera;
+        public Camera camera;
 
         VertexPositionColor[] verts;
         VertexBuffer vertexBuffer;
@@ -28,13 +28,15 @@ namespace WindowsGame_Test01
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            camera = new Camera(this);
-            this.Components.Add(camera);
+
+            
         }
         protected override void Initialize()
         {
             effect = new BasicEffect(GraphicsDevice);
             inputMontior = InputMontior.Instance;
+            Vector2 viewportSize = new Vector2(this.GraphicsDevice.Viewport.Width, this.GraphicsDevice.Viewport.Height);
+            camera = new Camera(viewportSize);
             base.Initialize();
 
         }
@@ -62,6 +64,7 @@ namespace WindowsGame_Test01
         protected override void Update(GameTime gameTime)
         {
             inputMontior.Update();
+            camera.Update();
             base.Update(gameTime);
         }
         protected override void Draw(GameTime gameTime)
@@ -96,17 +99,19 @@ namespace WindowsGame_Test01
         Sprite2DManager testSpriteManager;
         Sprite3D[] testSprite3D;
         int n = 1;
-        Camera camera;
+
+        SpriteBatch spriteBatch;
         Hud hudview;
         protected override void Initialize()
         {
             testSpriteManager = Sprite2DManager.Instance;
             testSpriteManager.Initialize(this);
-
-            base.Initialize();
-            LogHelper.Write("Window Test Game Initialize...");
+            spriteBatch = new SpriteBatch(this.GraphicsDevice);
             
-
+            LogHelper.Write("Window Test Game Initialize...");
+            hudview=Hud.instance;
+            hudview.Initilize(this, spriteBatch);
+            base.Initialize();
         }
 
         protected override void LoadContent()
@@ -151,18 +156,20 @@ namespace WindowsGame_Test01
 
 
             Texture2D testTex = Content.Load<Texture2D>(@"test/test01");
-            SpriteBatch spriteBatch = new SpriteBatch(this.GraphicsDevice);
 
-            camera = new Camera(this);
-            hudview = new Hud(this, spriteBatch);
+
+            
             
             this.Components.Add(new FrameRateCounter(this, spriteBatch));
-            this.Components.Add(hudview);
-            this.Components.Add(camera);
+            
+
 
             testSprite3D = new Sprite3D[n];
             for (int i = 0; i < n; i++)
-                testSprite3D[i] = new Sprite3D(testTex, this.GraphicsDevice);
+            {
+                testSprite3D[i] = new Sprite3D(this.GraphicsDevice);
+                testSprite3D[i].setTexture(testTex);
+            }
 
 
             base.LoadContent();
@@ -174,9 +181,11 @@ namespace WindowsGame_Test01
             
             testSpriteManager.Update();
             for (int i = 0; i < n; i++)
+            {
                 testSprite3D[i].setEffect(new Vector3(0, 0, 0), camera.viewMatrix, camera.projection);
-            
-            
+                //hudview.addHudItem("camera.view", camera.viewMatrix.ToString());
+            }
+            hudview.Update();
         }
         protected override void Draw(GameTime gameTime)
         {
@@ -185,17 +194,8 @@ namespace WindowsGame_Test01
             for (int i = 0; i < n; i++)
                 testSprite3D[i].Draw();
             testSpriteManager.Draw();
-            
+            hudview.Draw();
             base.Draw(gameTime);
-            //SpriteBatch spriteBatch=new SpriteBatch(this.GraphicsDevice);
-            //spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, null, DepthStencilState.DepthRead, RasterizerState.CullCounterClockwise);
-            //spriteBatch.DrawString(spriteFont, "hello, world!", Vector2.Zero, Color.White, 0, Vector2.Zero, 0.01f, 0, 0);
-
-            // spriteBatch.End();
-
-
-
-
 
         }
         /*

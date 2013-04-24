@@ -9,37 +9,31 @@ using WindowsGame_Test01.Helper;
 
 namespace WindowsGame_Test01.Data
 {
-    class Camera : GameComponent
+    public class Camera
     {
         #region Variables
-        float x = 0, y = 0;
+        float x, y ;
         float zHeight = 200.0f;
         public Matrix viewMatrix;
         public Matrix projection;
         InputMontior inputMontior;
-
+        Vector2 viewportSize;
         #endregion
 
         #region Constructor
-        public Camera(Game game)
-            : base(game)
+        public Camera(Vector2 setViewportSize)
         {
-
+            x = 0;
+            y = 0;
+            viewportSize = setViewportSize;
+            viewMatrix = Matrix.CreateLookAt(new Vector3(x, y, zHeight), new Vector3(x, y, 0), Vector3.Up);
+            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)viewportSize.X / (float)viewportSize.Y, 1, 1000);
+            inputMontior = InputMontior.Instance;
+            inputMontior.keyEvent += new KeyHandler(this.KeyboardInputController);
         } // SimpleCamera(game)
         #endregion
 
-        #region Initialize
-        public override void Initialize()
-        {
-            viewMatrix = Matrix.CreateLookAt(new Vector3(x, y, zHeight), new Vector3(x, y, 0), Vector3.Up);
-            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,(float)Game.Window.ClientBounds.Width / (float)Game.Window.ClientBounds.Height, 1, 1000);
-            inputMontior = InputMontior.Instance;
-            inputMontior.keyEvent += new KeyHandler(this.KeyboardInputController);
-            base.Initialize();
-        } // Initialize
-        #endregion
-
-        public void KeyboardInputController (Object s , KeyEventArgs e)
+        private void KeyboardInputController (Object s , KeyEventArgs e)
         {
             foreach(Keys key in e.KeyChars)
             {
@@ -56,19 +50,14 @@ namespace WindowsGame_Test01.Data
 
         }
 
-
         #region Update
-        public override void Update(GameTime gameTime)
+        public void Update()
         {
-            base.Update(gameTime);
-
             viewMatrix = Matrix.CreateLookAt(
               new Vector3(x, y, zHeight), new Vector3(x, y, 0), Vector3.Up);
             projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.PiOver4,
-                (float)Game.Window.ClientBounds.Width / (float)Game.Window.ClientBounds.Height, 1, 1000);
-
-
+                (float)viewportSize.X / (float)viewportSize.Y, 1, 1000);
         } // Update(gameTime)
         #endregion
     } // class SimpleCamera

@@ -11,12 +11,12 @@ namespace WindowsGame_Test01.Data
     public class Sprite3D
     {
         public Vector3 pos;
-        public Texture2D texture;
+
         VertexPositionTexture[] vpt;
         GraphicsDevice device;
         Matrix world;
         public BasicEffect effect;
-        public Sprite3D(Texture2D setTexture, GraphicsDevice setDevice)
+        public Sprite3D( GraphicsDevice setDevice)
         {
             vpt = new VertexPositionTexture[4];
             vpt[0] = new VertexPositionTexture(new Vector3(-25,-25, 0), new Vector2(0, 1));
@@ -24,15 +24,19 @@ namespace WindowsGame_Test01.Data
             vpt[2] = new VertexPositionTexture(new Vector3(25,-25, 0), new Vector2(1, 1));
             vpt[3] = new VertexPositionTexture(new Vector3(25, 25, 0), new Vector2(1, 0));
 
-            texture = setTexture;
+            
             
             device = setDevice;
             world = Matrix.CreateWorld(pos, Vector3.Forward, Vector3.Up);
             effect = new BasicEffect(device);
             effect.World = world;
             effect.TextureEnabled = true;
-            effect.Texture = texture;
 
+
+        }
+        public void setTexture(Texture2D setTexture) 
+        {
+            effect.Texture = setTexture;
         }
         public void setEffect(Vector3 setPos, Matrix setView, Matrix setProj)
         {
@@ -46,9 +50,8 @@ namespace WindowsGame_Test01.Data
         {
 
         }
-        public void Draw() 
+        public void Draw()
         {
-
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();

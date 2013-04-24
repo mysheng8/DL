@@ -45,7 +45,7 @@ namespace WindowsGame_Test01.Helper
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(spriteFont, fps, new Vector2(20, 20), Color.White);    // 坐标根据需要自行修改
+            spriteBatch.DrawString(spriteFont, fps, new Vector2(20, 0), Color.White);    // 坐标根据需要自行修改
 
             spriteBatch.End();
         }

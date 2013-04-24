@@ -7,8 +7,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace WindowsGame_Test01.Helper
 {
-    public class Hud : Microsoft.Xna.Framework.DrawableGameComponent
+    public class Hud 
     {
+        private static Hud writer = null;
+        private  Hud() { }
+        public static Hud instance
+        {
+            get
+            {
+                if (writer == null)
+                {
+                    writer = new Hud();
+                }
+                return writer;
+            }
+        }
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
         Queue<string> hudList;
@@ -17,37 +30,37 @@ namespace WindowsGame_Test01.Helper
         int frameCounter = 0;
         TimeSpan elapsedTime = TimeSpan.Zero;
 
-        public Hud(Game game, SpriteBatch spriteBatch)
-            : base(game)
+        public void Initilize(Game game, SpriteBatch spriteBatch)
         {
-            spriteFont = game.Content.Load<SpriteFont>(@"Fonts/sfText");
+            spriteFont = game.Content.Load<SpriteFont>(@"Fonts/Hud");
             this.spriteBatch = spriteBatch;
             hudList = new Queue<string>();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update()
         {
-            elapsedTime += gameTime.ElapsedGameTime;
-
-            if (elapsedTime > TimeSpan.FromSeconds(1))
+            if (hudList.Count > 10) 
             {
-                elapsedTime -= TimeSpan.FromSeconds(1);
-                frameRate = frameCounter;
-                frameCounter = 0;
+                hudList.Dequeue();
             }
         }
         public void addHudItem(string item, string value)
         {
-            string consoleLine=string.Format((item+": {0}"), value);
-            hudList.(consoleLine);
+            DateTime ct = DateTime.Now;
+            string s = "[" + ct.Hour.ToString("00") + ":" +
+              ct.Minute.ToString("00") + ":" +
+              ct.Second.ToString("00") + "] ";
+              ;
+            string consoleLine=string.Format((s+item+": {0}"), value);
+            hudList.Enqueue(consoleLine);
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Draw()
         {
             spriteBatch.Begin();
             for (int i = 0; i < hudList.Count;i++ )
             {
-                spriteBatch.DrawString(spriteFont, hudList[i], new Vector2(20*(i+1), 20), Color.White);
+                spriteBatch.DrawString(spriteFont, hudList.ElementAt(i), new Vector2(20,20+12*i), Color.White);
 
             }
             spriteBatch.End();
