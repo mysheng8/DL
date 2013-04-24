@@ -117,6 +117,7 @@
     <Compile Include="Data\Character.cs" />
     <Compile Include="Data\GameEntity.cs" />
     <Compile Include="Helper\Fps.cs" />
+    <Compile Include="Helper\Hud.cs" />
     <Compile Include="Helper\Input.cs" />
     <Compile Include="Data\Sprite2D.cs" />
     <Compile Include="Data\SpriteText.cs" />
