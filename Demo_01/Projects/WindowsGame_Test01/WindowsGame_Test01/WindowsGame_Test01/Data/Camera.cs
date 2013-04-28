@@ -16,7 +16,7 @@ namespace WindowsGame_Test01.Data
         float zHeight = 200.0f;
         public Matrix viewMatrix;
         public Matrix projection;
-        InputMontior inputMontior;
+        //InputMontior inputMontior;
         Vector2 viewportSize;
         #endregion
 
@@ -28,8 +28,8 @@ namespace WindowsGame_Test01.Data
             viewportSize = setViewportSize;
             viewMatrix = Matrix.CreateLookAt(new Vector3(x, y, zHeight), new Vector3(x, y, 0), Vector3.Up);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)viewportSize.X / (float)viewportSize.Y, 1, 1000);
-            inputMontior = InputMontior.Instance;
-            inputMontior.keyEvent += new KeyHandler(this.KeyboardInputController);
+            //inputMontior = InputMontior.Instance;
+            //inputMontior.keyEvent += new KeyHandler(this.KeyboardInputController);
         } // SimpleCamera(game)
         #endregion
 

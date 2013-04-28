@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using WindowsGame_Test01.Helper;
 
 
@@ -96,15 +97,18 @@ namespace WindowsGame_Test01.Data
 
     public class Sprite2DManager
     {
-        private SpriteBatch spriteBatch;
-        private Game game;
-
-        private List<Sprite2D> SpriteList;
+        static SpriteBatch spriteBatch;
+        static GraphicsDevice device;
+        static ContentManager content;
+        List<Sprite2D> SpriteList;
 
         private static Sprite2DManager sprite2DManager;
         private Sprite2DManager()
         {
             SpriteList = new List<Sprite2D>();
+            device = GameServices.GetService<GraphicsDevice>();
+            content = GameServices.GetService<ContentManager>();
+            spriteBatch = new SpriteBatch(device);
             
         }
 
@@ -118,16 +122,9 @@ namespace WindowsGame_Test01.Data
             }
         }
 
-        public void Initialize(Game setGame)
-        {
-            game = setGame;
-            spriteBatch = new SpriteBatch(game.GraphicsDevice);
-
-        }
-
         public Sprite2D CreateSimpleSprite(string texFileName, Rectangle setRect, Rectangle? setSourceRect, RenderPass setRenderPass, int setSortID = 0)
         {
-            Texture2D newTex = game.Content.Load<Texture2D>(texFileName);
+            Texture2D newTex = content.Load<Texture2D>(texFileName);
             ImageSprite sprite = new ImageSprite(newTex, setRect, setSourceRect, setRenderPass);
             SpriteList.Add(sprite);
             sprite.sortID = setSortID;
@@ -137,7 +134,7 @@ namespace WindowsGame_Test01.Data
 
         public Sprite2D CreateAnimateSprite(string texFileName, Rectangle setRect, Point setFrameSize, RenderPass setRenderPass, int setSortID = 0)
         {
-            Texture2D newTex = game.Content.Load<Texture2D>(texFileName);
+            Texture2D newTex = content.Load<Texture2D>(texFileName);
             AnimateSprite sprite = new AnimateSprite(newTex, setRect, setFrameSize, setRenderPass);
             SpriteList.Add(sprite);
             sprite.sortID = setSortID;
@@ -148,7 +145,7 @@ namespace WindowsGame_Test01.Data
 
         public Sprite2D CreateSpriteText(string setText, Vector2 setPosition, string spriteFontFileName, RenderPass setRenderPass, int setSortID = 0)
         {
-            SpriteFont spriteFont = game.Content.Load<SpriteFont>(spriteFontFileName);
+            SpriteFont spriteFont = content.Load<SpriteFont>(spriteFontFileName);
             SpriteText spriteText = new SpriteText(setText, setPosition, spriteFont);
             spriteText.renderPass = setRenderPass;
             spriteText.sortID = setSortID;
@@ -158,9 +155,9 @@ namespace WindowsGame_Test01.Data
         }
         public Sprite2D CreateBackground(string texFileName, int setPaintWidth, int setPaintHeight, RenderPass setRenderPass, int setSortID = 0)
         {
-            Texture2D newTex = game.Content.Load<Texture2D>(texFileName);
-            int screenWidth = game.GraphicsDevice.Viewport.Width;
-            int screenHeight = game.GraphicsDevice.Viewport.Height;
+            Texture2D newTex = content.Load<Texture2D>(texFileName);
+            int screenWidth = device.Viewport.Width;
+            int screenHeight = device.Viewport.Height;
             Background background = new Background(newTex, setPaintWidth, setPaintHeight, screenWidth, screenHeight);
             background.renderPass = setRenderPass;
             background.sortID = setSortID;
@@ -170,9 +167,9 @@ namespace WindowsGame_Test01.Data
         }
         public Sprite2D CreateCanvas(string texFileName, int setClipSizeX, int setClipSizeY, int setPaintWidth, int setPaintHeight, int[,] setMap, RenderPass setRenderPass, int setSortID = 0)
         {
-            Texture2D newTex = game.Content.Load<Texture2D>(texFileName);
-            int screenWidth = game.GraphicsDevice.Viewport.Width;
-            int screenHeight = game.GraphicsDevice.Viewport.Height;
+            Texture2D newTex = content.Load<Texture2D>(texFileName);
+            int screenWidth = device.Viewport.Width;
+            int screenHeight = device.Viewport.Height;
             Canvas canvas = new Canvas(newTex, setClipSizeX, setClipSizeY, setPaintWidth, setPaintHeight, setMap, screenWidth, screenHeight);
             canvas.renderPass = setRenderPass;
             canvas.sortID = setSortID;

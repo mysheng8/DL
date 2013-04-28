@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using WindowsGame_Test01.Helper;
 using WindowsGame_Test01.Data;
 
@@ -18,43 +19,33 @@ namespace WindowsGame_Test01
     public class TestGame : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-        InputMontior inputMontior;
-        public  BasicEffect effect;
+        InputMontior input;
         public Camera camera;
 
-        VertexPositionColor[] verts;
-        VertexBuffer vertexBuffer;
+        public SpriteBatch spriteBatch;
+        public Hud hudview;
         public TestGame()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            
+  
         }
         protected override void Initialize()
         {
-            effect = new BasicEffect(GraphicsDevice);
-            inputMontior = InputMontior.Instance;
+            GameServices.AddService<GraphicsDevice>(GraphicsDevice);
+            GameServices.AddService<ContentManager>(Content);
+            spriteBatch = new SpriteBatch(this.GraphicsDevice);
+            input = InputMontior.Instance;
             Vector2 viewportSize = new Vector2(this.GraphicsDevice.Viewport.Width, this.GraphicsDevice.Viewport.Height);
             camera = new Camera(viewportSize);
+            hudview = Hud.instance;
+            hudview.Initilize(this, spriteBatch);
             base.Initialize();
 
         }
         protected override void LoadContent()
         {
-
-            
-            verts = new VertexPositionColor[4];
-            verts[0] = new VertexPositionColor(new Vector3(0, 1, 0), Color.Blue);
-            verts[1] = new VertexPositionColor(new Vector3(1, -1, 0), Color.Red);
-            verts[2] = new VertexPositionColor(new Vector3(-1, -1, 0), Color.Green);
-
-
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionTexture), verts.Length, BufferUsage.None);
-            vertexBuffer.SetData(verts);
-
-            
-            
             
         }
         protected override void UnloadContent()
@@ -63,29 +54,17 @@ namespace WindowsGame_Test01
         }
         protected override void Update(GameTime gameTime)
         {
-            inputMontior.Update();
             camera.Update();
+            hudview.Update();
+            input.Update();
             base.Update(gameTime);
         }
         protected override void Draw(GameTime gameTime)
         {
-            
-            
-
-
             // Set the vertex buffer on the GraphicsDevice
-            GraphicsDevice.SetVertexBuffer(vertexBuffer);
-            effect.VertexColorEnabled = true;
-            effect.TextureEnabled = true;
+
             // TODO: Add your drawing code here
-            effect.World = Matrix.Identity;
-            effect.View = camera.viewMatrix;
-            effect.Projection = camera.projection;
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-               // GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, verts, 0, 2);
-            }
+            hudview.Draw();
             base.Draw(gameTime);
         }
 
@@ -97,28 +76,21 @@ namespace WindowsGame_Test01
     {
 
         Sprite2DManager testSpriteManager;
-        Sprite3D[] testSprite3D;
-        int n = 1;
+        Sprite3DManager sprite3DManager;
 
-        SpriteBatch spriteBatch;
-        Hud hudview;
         protected override void Initialize()
         {
-            testSpriteManager = Sprite2DManager.Instance;
-            testSpriteManager.Initialize(this);
-            spriteBatch = new SpriteBatch(this.GraphicsDevice);
             
+
             LogHelper.Write("Window Test Game Initialize...");
-            hudview=Hud.instance;
-            hudview.Initilize(this, spriteBatch);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             LogHelper.Write("Window Test Game LoadContent...");
-
-
+            testSpriteManager = Sprite2DManager.Instance;
+            sprite3DManager = new Sprite3DManager(camera);
             //Map map = new Map();
 
             testSpriteManager.CreateSimpleSprite(@"test/test02", new Rectangle(0, 0, 64, 64), null, RenderPass.Environment);
@@ -153,48 +125,25 @@ namespace WindowsGame_Test01
             Clip attack1 = new Clip(attTex, new Point(5, 10));
             Character a = new Character("a", new Rectangle(420, 280, 150, 150), idle, run, attack1);
 
+            sprite3DManager.CreateSprite3D(@"Character01/test02", new Point(50, 50), new Point(4, 5));
 
-
-            Texture2D testTex = Content.Load<Texture2D>(@"test/test01");
-
-
-            
-            
             this.Components.Add(new FrameRateCounter(this, spriteBatch));
-            
-
-
-            testSprite3D = new Sprite3D[n];
-            for (int i = 0; i < n; i++)
-            {
-                testSprite3D[i] = new Sprite3D(this.GraphicsDevice);
-                testSprite3D[i].setTexture(testTex);
-            }
-
-
             base.LoadContent();
 
         }
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            
             testSpriteManager.Update();
-            for (int i = 0; i < n; i++)
-            {
-                testSprite3D[i].setEffect(new Vector3(0, 0, 0), camera.viewMatrix, camera.projection);
-                //hudview.addHudItem("camera.view", camera.viewMatrix.ToString());
-            }
-            hudview.Update();
+            sprite3DManager.Update();
+            //hudview.addHudItem("sprite3D.currentFrame", testSprite3D[i].currentFrame.ToString());
+
         }
         protected override void Draw(GameTime gameTime)
         {
-
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            for (int i = 0; i < n; i++)
-                testSprite3D[i].Draw();
+            sprite3DManager.Draw();
             testSpriteManager.Draw();
-            hudview.Draw();
             base.Draw(gameTime);
 
         }
