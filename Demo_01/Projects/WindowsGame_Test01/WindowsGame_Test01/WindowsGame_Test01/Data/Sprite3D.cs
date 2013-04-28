@@ -10,6 +10,12 @@ using WindowsGame_Test01.Helper;
 
 namespace WindowsGame_Test01.Data
 {
+    public struct Rect
+    {
+        public Vector2 min;
+        public Vector2 max;
+    }
+
     public class Sprite3D
     {
         public Vector3 pos;
@@ -17,9 +23,11 @@ namespace WindowsGame_Test01.Data
         VertexPositionTexture[] vpt;
         GraphicsDevice device;
         Matrix world;
-        public BasicEffect effect;
-        Point frameSize;
+ 
+        public Point frameSize;
         public Point currentFrame;
+        public BasicEffect effect;
+
         public Sprite3D( GraphicsDevice setDevice)
         {
             vpt = new VertexPositionTexture[4];
@@ -29,18 +37,25 @@ namespace WindowsGame_Test01.Data
             effect.World = world;
             effect.TextureEnabled = true;
         }
-        public void createSprite(Point setSpriteSize, Point setFrameSize)
+        public void createSquard(Point setSpriteSize)
         {
             int x = setSpriteSize.X;
             int y = setSpriteSize.Y;
-            float u = 1.0f / setFrameSize.X;
-            float v = 1.0f / setFrameSize.Y;
-            frameSize = setFrameSize;
             currentFrame = new Point(0, 0);
-            vpt[0] = new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, v));
+            vpt[0] = new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 1));
             vpt[1] = new VertexPositionTexture(new Vector3(0, y, 0), new Vector2(0, 0));
-            vpt[2] = new VertexPositionTexture(new Vector3(x, 0, 0), new Vector2(u, v));
-            vpt[3] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(u, 0));
+            vpt[2] = new VertexPositionTexture(new Vector3(x, 0, 0), new Vector2(1, 1));
+            vpt[3] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(1, 0));
+        }
+        public void setFrameSize(Point setSize)
+        {
+            frameSize = setSize;
+            float u = 1.0f / frameSize.X;
+            float v = 1.0f / frameSize.Y;
+            vpt[0].TextureCoordinate = new Vector2(0, v);
+            vpt[1].TextureCoordinate = new Vector2(0, 0);
+            vpt[2].TextureCoordinate = new Vector2(u, v);
+            vpt[3].TextureCoordinate = new Vector2(u, 0);
         }
         public void setPos(Vector3 setPos)
         {
@@ -57,23 +72,14 @@ namespace WindowsGame_Test01.Data
             effect.View = setView;
             effect.Projection = setProj;
         }
-        public void Update()
+        public void setUV(Rect UV)
         {
-            ++currentFrame.X;
-            if (currentFrame.X >= frameSize.X)
-            {
-                currentFrame.X = 0;
-                ++currentFrame.Y;
-                if (currentFrame.Y >= frameSize.Y)
-                    currentFrame.Y = 0;
-            }
-            float deltaU = 1.0f / frameSize.X;
-            float deltaV = 1.0f / frameSize.Y;
-            vpt[0].TextureCoordinate = new Vector2(deltaU * currentFrame.X, deltaV * (currentFrame.Y + 1));
-            vpt[1].TextureCoordinate = new Vector2(deltaU * currentFrame.X, deltaV * currentFrame.Y);
-            vpt[2].TextureCoordinate = new Vector2(deltaU * (currentFrame.X + 1), deltaV * (currentFrame.Y + 1));
-            vpt[3].TextureCoordinate = new Vector2(deltaU * (currentFrame.X + 1), deltaV * currentFrame.Y);
+            vpt[0].TextureCoordinate = new Vector2(UV.min.X, UV.max.Y);
+            vpt[1].TextureCoordinate = new Vector2(UV.min.X, UV.min.Y);
+            vpt[2].TextureCoordinate = new Vector2(UV.max.X, UV.max.Y);
+            vpt[3].TextureCoordinate = new Vector2(UV.max.X, UV.min.Y);
         }
+
         public void Draw()
         {
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -86,6 +92,32 @@ namespace WindowsGame_Test01.Data
         }
 
     }
+
+    public class AnimSp
+    {
+        Point frameSize, currentFrame;
+        public AnimSp(Point setFrameSize)
+        {
+            frameSize = setFrameSize;
+        }
+        public Rect Update()
+        {
+            ++currentFrame.X;
+            if (currentFrame.X >= frameSize.X)
+            {
+                currentFrame.X = 0;
+                ++currentFrame.Y;
+                if (currentFrame.Y >= frameSize.Y)
+                    currentFrame.Y = 0;
+            }
+            float deltaU = 1.0f / frameSize.X;
+            float deltaV = 1.0f / frameSize.Y;
+            Rect UV;
+            UV.min = new Vector2(deltaU * currentFrame.X, deltaV * currentFrame.Y);
+            UV.max = new Vector2(deltaU * (currentFrame.X + 1), deltaV * (currentFrame.Y + 1));
+            return UV;
+        }
+    }
    
     public class Sprite3DManager
     {
@@ -94,28 +126,48 @@ namespace WindowsGame_Test01.Data
         Camera camera;
 
         List<Sprite3D> spList;
-        public Sprite3DManager(Camera setCamera) 
+        private Sprite3DManager() 
         {
             device = GameServices.GetService<GraphicsDevice>();
             content = GameServices.GetService<ContentManager>();
-            camera = setCamera;
             spList = new List<Sprite3D>();
         }
-        public Sprite3D CreateSprite3D(string texFile, Point setSpriteSize, Point setFrameSize)
+        private static Sprite3DManager sprite3DManager;
+        public static Sprite3DManager instance
+        {
+            get
+            { 
+                if(sprite3DManager==null)
+                {
+                    sprite3DManager = new Sprite3DManager();
+                }
+                return sprite3DManager;
+            }
+        }
+        public void setCamera(Camera setCamera)
+        {
+            camera=setCamera;
+        }
+        public Sprite3D CreateSprite3D(Point setSpriteSize)
         {
             Sprite3D s = new Sprite3D(device);
-            Texture2D tex = content.Load<Texture2D>(texFile);
-            s.setTexture(tex);
-            s.createSprite(setSpriteSize, setFrameSize);
+            s.createSquard(setSpriteSize);
             s.setPos(new Vector3(0, 0, 0));
             spList.Add(s);
+            return s;
+        }
+        public Sprite3D CreateSimpleSprite3D(string texFile, Point setSpriteSize, Point setFrameSize)
+        {
+            Sprite3D s = CreateSprite3D(setSpriteSize);
+            Texture2D tex = content.Load<Texture2D>(texFile);
+            s.setTexture(tex);
+            s.setFrameSize(setFrameSize);
             return s;
         }
         public void Update()
         {
             foreach (Sprite3D s in spList)
             {
-                s.Update();
                 s.setView(camera.viewMatrix, camera.projection);
             }
         }

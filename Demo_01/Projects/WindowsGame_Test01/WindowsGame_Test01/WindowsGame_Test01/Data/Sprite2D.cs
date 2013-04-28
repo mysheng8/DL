@@ -180,14 +180,6 @@ namespace WindowsGame_Test01.Data
             return canvas;
         }
 
-        public Sprite2D CreateCharacterAnim(CharacterAnimSprite charAnim, RenderPass setRenderPass, int setSortID = 0)
-        {
-            charAnim.renderPass = setRenderPass;
-            charAnim.sortID = setSortID;
-            SpriteList.Add(charAnim);
-            LogHelper.Write("Create a Character Animation Sprite ");
-            return charAnim;
-        }
 
         public void RemoveSpirte(Sprite2D sprite)
         {

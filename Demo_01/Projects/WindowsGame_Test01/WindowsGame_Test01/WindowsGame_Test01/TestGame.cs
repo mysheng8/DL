@@ -117,13 +117,6 @@ namespace WindowsGame_Test01
 
 
 
-            Texture2D idleTex = Content.Load<Texture2D>(@"Character01/test01");
-            Clip idle = new Clip(idleTex, new Point(5, 3));
-            Texture2D runTex = Content.Load<Texture2D>(@"Character01/test02");
-            Clip run = new Clip(runTex, new Point(4, 5));
-            Texture2D attTex = Content.Load<Texture2D>(@"Character01/test03");
-            Clip attack1 = new Clip(attTex, new Point(5, 10));
-            Character a = new Character("a", new Rectangle(420, 280, 150, 150), idle, run, attack1);
 
             sprite3DManager.CreateSprite3D(@"Character01/test02", new Point(50, 50), new Point(4, 5));
 
